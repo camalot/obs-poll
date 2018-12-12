@@ -1,0 +1,53 @@
+html,
+body {
+	width:100vw;
+	height:100vh;
+	margin:0;
+	padding:0;
+
+	font-family: "Roboto", "Helvetica", sans-serif;
+	overflow: hidden;
+}
+
+
+body {
+	color: #FFF;
+	font-size: 2em;
+	background-color: #000;
+}
+
+* {
+	vertical-align: middle;
+}
+
+.hidden {
+	display: none;
+}
+
+li {
+	font-size: 2em;
+	line-height: 2em;
+	margin: 0;
+	padding: 0;
+}
+
+li .progress {
+	width: 100%;
+	background-color: transparent;
+	line-height: 2em;
+	position: relative;
+}
+
+li .progress .label {
+	z-index: 100;
+	position: relative;
+}
+li .progress .bar {
+	width: 90%;
+	background-color: #400;
+	left: 0;
+	top: 5px;
+	bottom: 0;
+	margin: 0 0 5px -50px;
+	position: absolute;
+}
