@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css?family=Lato:400,400i,700");
+
 html,
 body {
 	width:100vw;
@@ -24,11 +26,42 @@ body {
 	display: none;
 }
 
+ol {
+  counter-reset: my-awesome-counter;
+  list-style: none;
+  padding-left: 45px;
+}
+ol li {
+  margin: 0 0 0.5rem 0;
+  counter-increment: my-awesome-counter;
+  position: relative;
+}
+ol li::before {
+  content: counter(my-awesome-counter);
+  color: #ccc;
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: absolute;
+  --size: 32px;
+  left: calc(-1 * var(--size) - 10px);
+  line-height: var(--size);
+  width: var(--size);
+  height: var(--size);
+  top: 12px;
+  transform: rotate(-10deg);
+  background: #900;
+  border-radius: 50%;
+  text-align: center;
+	box-shadow: 1px 1px 0 #999;
+	z-index: 100;
+}
+
 li {
 	font-size: 2em;
 	line-height: 2em;
 	margin: 0;
 	padding: 0;
+	background-color: transparent;
 }
 
 li .progress {
@@ -39,15 +72,26 @@ li .progress {
 }
 
 li .progress .label {
-	z-index: 100;
 	position: relative;
+	max-width: 100%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	z-index: 100;
 }
+
 li .progress .bar {
-	width: 90%;
+	width: 0%;
 	background-color: #400;
 	left: 0;
 	top: 5px;
 	bottom: 0;
 	margin: 0 0 5px -50px;
 	position: absolute;
+	z-index: 1;
+
+	-webkit-transition: width 2s ease-in-out;
+	-moz-transition: width 2s ease-in-out;
+	-o-transition: width 2s ease-in-out;
+	transition: width 2s ease-in-out;
 }

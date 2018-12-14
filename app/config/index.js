@@ -1,6 +1,16 @@
 "use strict";
 const merge = require("merge");
-let outConfig = {};
+let outConfig = {
+
+
+};
+
+outConfig.isProduction = !(outConfig.environment === "dev" ||
+	outConfig.environment === "" ||
+	outConfig.environment === null ||
+	outConfig.environment === undefined ||
+	outConfig.environment === "development");
+
 
 const normalizedPath = require("path").join(__dirname, "./");
 require("fs")

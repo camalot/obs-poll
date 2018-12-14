@@ -1,5 +1,5 @@
 "use strict";
-$(function () {
+$(() => {
 	let poll = $(".poll");
 	let channel = poll.data('channel');
 
@@ -27,7 +27,12 @@ $(function () {
 			let label = $("<div class=\"label\"/>");
 			label.html(item.name);
 			let pbar = $("<div class=\"bar\" />");
-
+			setTimeout(() => {
+				pbar.css("width", `${item.percentage}%`);
+			}, 300);
+			if(item.background) {
+				pbar.css("background-color", item.background);
+			}
 			progress.append(label);
 			progress.append(pbar);
 			li.append(progress);
@@ -36,8 +41,9 @@ $(function () {
 		}
 	};
 
-	var socket = io(`/${channel}`).connect('http://localhost:3000');
-	socket.on('poll.data', function (data) {
+	var socket = io(`/${channel}`).connect(`${location.protocol}//${location.hostname}${location.port ? ':'+location.port : ''}/`);
+	socket.on('poll.data', (data) => {
+		console.log("received data");
 		console.log(data);
 		return _applyPollData(data);
 	});

@@ -11,6 +11,9 @@ const config = require('./config');
 const app = express();
 const polldb = require('./lib/database/poll');
 
+const passport = require("passport");
+const TwitchStrategy = require("passport-twitch").Strategy;
+const UserAuthHandler = require('./lib/auth/UserAuthHandler');
 const server = require('http').Server(app);
 const socket = require('socket.io')(server);
 
@@ -25,6 +28,21 @@ app.use(favicon(path.join(__dirname, "assets/images", "bit13-16.png")));
 // 12/11/2018 @zehava77 2
 
 app.use(require('./lib/middleware/socketio')(socket));
+app.use(require('./lib/middleware/user'));
+
+passport.use(
+	new TwitchStrategy(
+		{
+			clientID: config.twitch.client_id,
+			clientSecret: config.twitch.client_secret,
+			callbackURL: `http://${config.isProduction ? config.site.hostName : "localhost:3000"}/auth/twitch/callback`,
+			scope: "user_read"
+		},
+		(accessToken, refreshToken, profile, done) => {
+			return new UserAuthHandler(accessToken, refreshToken, profile, done);
+		}
+	)
+);
 
 require('./socket')(socket);
 

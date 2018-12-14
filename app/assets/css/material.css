@@ -1,0 +1,13 @@
+.mdl-page-fab {
+	position: fixed;
+	right: 40px;
+	bottom: 70px;
+}
+
+.mdl-card.mdl-card-short {
+	min-height: 0;
+}
+
+.mdl-fillwidth {
+	width: 100%;
+}

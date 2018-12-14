@@ -60,7 +60,6 @@ module.exports = {
 			// return mongodb.get(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: id });
 			mongodb.find(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel) }, { created: -1 }, 1)
 				.then((results) => {
-					console.log(results);
 					if (results && results.length >= 1) {
 						return resolve(results[0]);
 					} else {

@@ -12,9 +12,10 @@ router.get('/:channel', (req, res, next) => {
 	return res.render("manage", { channel: req.params.channel });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/:channel?', (req, res, next) => {
 	let data = req.body;
-	let channel = data.channel;
+	console.log(data);
+	let channel = req.params.channel || data.channel;
 	let items = data.items.map(x => { return { name: x, votes: [] } });
 	return poll.insert(channel, {
 		id: shortid.generate(),

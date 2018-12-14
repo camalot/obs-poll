@@ -6,6 +6,7 @@ const utils = require('../utils');
 const dateUtil = utils.date;
 const stringUtils = utils.string;
 const merge = require('merge');
+const stats = utils.stats;
 
 const POLL_COMMAND_REGEX = /^!poll(?:\s*(start|stop|help))?/i;
 
@@ -30,7 +31,6 @@ class ChatPollHandler {
 			botDb.get(channel)
 				.then((data) => {
 					return new Promise((resolve, reject) => {
-						console.log(data)
 						if (!data || !data.enabled) {
 							console.log("no channel data");
 							return resolve(null);
@@ -95,13 +95,11 @@ class ChatPollHandler {
 	vote(channel, userstate, vote) {
 		let _this = this;
 		// 12/11/2018 @dynamaxx19: 50 bits
-
 		return new Promise((resolve, reject) => {
 			return poll.get(channel)
 				.then((data) => {
 					if(data) {
 						// have a poll
-						console.log(data);
 						let parsedIndex = parseInt(vote, 0);
 						if (isNaN(parsedIndex)) {
 							console.log(`Vote String '${vote}' is not a number`);
@@ -111,7 +109,6 @@ class ChatPollHandler {
 						let voteIndex = parsedIndex - 1;
 						let cloned = merge(data, {});
 						delete cloned._id;
-						console.log(cloned);
 
 						if(voteIndex >= cloned.items.length) {
 							console.log("vote index is outside the range of items");
@@ -138,7 +135,6 @@ class ChatPollHandler {
 							username: userstate.username,
 							timestamp: dateUtil.utc()
 						});
-						console.log(cloned);
 
 						return poll.update(channel, cloned);
 					} else {
@@ -149,14 +145,18 @@ class ChatPollHandler {
 				})
 				.then((data) => {
 					if(data) {
-						console.log("emit: poll.data");
-						console.log(data);
-						_this._socket.sockets.emit("poll.data", data);
-						return resolve(data);
+						console.log("update stats");
+						return stats.calculate(data);
 					} else {
 						console.log("no data returned to send");
 						return resolve(null);
 					}
+				})
+				.then(data => {
+					delete data._id;
+					console.log("emit poll.data");
+					_this._socket.of(`/${stringUtils.safeChannel(channel)}`).emit("poll.data", data);
+					return resolve(data);
 				})
 				.catch(err => {
 					console.error(err);

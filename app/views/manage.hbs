@@ -1,38 +1,121 @@
-<div>
-	<form action="/manage/" method="POST">
+<div class="page-content">
+	<div class="mdl-grid">
+		<div class="mdl-cell mdl-cell--12-col">
 
-		<input type="hidden" name="channel" value="{{channel}}" />
-		<div>
-			<label>Poll Name
-				<input type="text" name="title" value="" />
-			</label>
+
+
+			<form action="/manage/{{channel}}" method="post" enctype="application/x-www-form-urlencoded">
+				<input type="hidden" name="channel" value="{{channel}}" />
+
+				<div class="mdl-card" style="width:100%;">
+					<div class="mdl-card__title">
+						<h4 class="mdl-card__title-text">Create New Poll</h4>
+					</div>
+					<div class="mdl-card__supporting-text">
+						<div class="mdl-grid">
+
+							<div class="mdl-cell mdl-cell--12-col">
+								<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+									<input class="mdl-textfield__input" type="text" name="title" id="title" required value="">
+									<label class="mdl-textfield__label" for="title">Poll Title</label>
+									<span class="mdl-textfield__error"></span>
+								</div>
+								<div style="clear:both">The title of the poll</div>
+							</div>
+
+							<div class="mdl-cell mdl-cell--12-col">
+								<div class="mdl-card" style="width:100%;">
+									<h5 class="">Poll Items <button type="button" style="float:right;" data-action="add-item" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Add Item</button></h5>
+									<div class="mdl-card__supporting-text">
+										<div class="mdl-grid" data-container="poll-items">
+
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="mdl-card__actions">
+						<button type="button" style="float:right;" class="mdl-button mdl-js-button">Cancel</button>
+						<button type="submit" style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Save
+							&amp; Start Poll</button>
+						{{!-- <button type="button" style="float:left;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
+							Poll</button> --}}
+					</div>
+				</div>
+			</form>
 		</div>
 
+
+		{{!--
 		<div>
-			<label>Poll Item 1
-				<input type="text" name="items" value="" />
-			</label>
-		</div>
 
-		<div>
-			<label>Poll Item 2
-				<input type="text" name="items" value="" />
-			</label>
-		</div>
+			<input type="hidden" name="channel" value="{{channel}}" />
+			<div>
+				<label>Poll Name
+					<input type="text" name="title" value="" />
+				</label>
+			</div>
 
-		<div>
-			<label>Poll Item 3
-				<input type="text" name="items" value="" />
-			</label>
-		</div>
+			<div>
+				<label>Poll Item 1
+					<input type="text" name="items" value="" />
+				</label>
+			</div>
 
-		<div>
-			<label>Poll Item 4
-				<input type="text" name="items" value="" />
-			</label>
-		</div>
+			<div>
+				<label>Poll Item 2
+					<input type="text" name="items" value="" />
+				</label>
+			</div>
+
+			<div>
+				<label>Poll Item 3
+					<input type="text" name="items" value="" />
+				</label>
+			</div>
+
+			<div>
+				<label>Poll Item 4
+					<input type="text" name="items" value="" />
+				</label>
+			</div>
 
 
-		<button type="submit">Create Poll</button>
-	</form>
+			<button type="submit">Create Poll</button>
+			</form>
+		</div> --}}
+	</div>
 </div>
+
+<div class="mdl-page-fab" style="z-index: 900">
+	{{!-- <ul class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect" for="menu-add">
+		<li class="mdl-menu__item" data-dialog="new-network-dialog">Add Network</li>
+		<li class="mdl-menu__item" data-dialog="new-account-dialog">Add Account</li>
+	</ul>
+	--}}
+	<button id="menu-add" data-action="add-item" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+		<i class="material-icons">add</i>
+	</button>
+</div>
+
+
+<template data-id="poll-item">
+	<div class="mdl-cell mdl-cell--12-col" data-type="item">
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+			<input class="mdl-textfield__input" type="text" name="items" required value="">
+			<label class="mdl-textfield__label" for="title">Item</label>
+			<span class="mdl-textfield__error"></span>
+		</div>
+		<div style="clear:both"></div>
+		<div style="float:right">
+			<button type="button" data-action="delete-item" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete Item</button>
+		</div>
+	</div>
+</template>
+
+{{#section 'scripts'}}
+<script src="/assets/scripts/manage.js"></script>
+{{/section}}

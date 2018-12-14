@@ -2,6 +2,9 @@
 const poll = require('./lib/database/poll');
 const bot = require('./lib/database/bot');
 const async = require('async');
+const utils = require('./lib/utils');
+const stats = utils.stats;
+
 module.exports = (io) => {
 	return new Promise((resolve, reject) => {
 		return bot.all()
@@ -22,8 +25,12 @@ module.exports = (io) => {
 										console.log("no data");
 										return res(null);
 									}
+									return stats.calculate(data ? data : null);
+								})
+								.then(data => {
+									delete data._id;
 									console.log(`emit to ${item.channel}: poll.data`);
-									socket.emit('poll.data', data ? data : null);
+									socket.emit('poll.data', data);
 									return res(data);
 								})
 								.catch(err => {

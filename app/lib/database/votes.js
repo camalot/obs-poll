@@ -61,7 +61,6 @@ module.exports = {
 							console.error(err);
 							return next(err);
 						}
-						console.log(result);
 						return resolve(result);
 					});
 				});
