@@ -9,6 +9,7 @@ $(() => {
 			poll.removeClass("hidden");
 		} else {
 			poll.addClass("hidden");
+			
 		}
 
 		poll.data("id", data.id);
@@ -30,8 +31,8 @@ $(() => {
 			setTimeout(() => {
 				pbar.css("width", `${item.percentage}%`);
 			}, 300);
-			if(item.background) {
-				pbar.css("background-color", item.background);
+			if(item.color) {
+				pbar.css("background-color", item.color);
 			}
 			progress.append(label);
 			progress.append(pbar);

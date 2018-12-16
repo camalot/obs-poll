@@ -26,6 +26,32 @@ let actions = {
 		let item = $(sender).closest("[data-type='item']");
 		$(item).remove();
 		checkMax();
+	},
+	"poll-state": (sender) => {
+		console.log("poll-state");
+		let url = '/api/poll/state/';
+		let source = $(sender);
+		console.log(source);
+		console.log(source.data("enabled"));
+		$.ajax(url, {
+			method: "post",
+			data: {
+				id: source.data("id"),
+				channel: source.data("channel"),
+				enabled: source.data("enabled") === "true"
+			},
+			success: (data, status, xhr) => {
+				console.log(data);
+				console.log($(`[data-action="poll-state"][data-enabled="false"][data-id="${data.id}]`));
+				if(data) {
+					$(`[data-action="poll-state"][data-enabled="false"][data-id="${data.id}"]`).attr("disabled", !data.enabled);
+					$(`[data-action="poll-state"][data-enabled="true"][data-id="${data.id}"]`).attr("disabled", data.enabled);
+				}
+			},
+			complete: (xhr, status) => {
+				console.log(status);
+			}
+		});
 	}
 };
 
@@ -48,8 +74,27 @@ let init = function (base) {
 				actions[action](this);
 			}
 		});
+
+		$("[data-type=color]").spectrum({
+			showInput: true,
+			chooseText: "OK",
+			preferredFormat: "hex3",
+			cancelText: "CANCEL",
+			clickoutFiresChange: true,
+			showInitial: true,
+		}).on("change.spectrum", (e, color) => {
+
+		});
+
+	$('[data-type=datetimepicker]').datetimepicker({
+		mask: true,
+		minDate: new Date()
+	});
 };
 
 $(() => {
 	init();
+
+	checkMax();
+
 });

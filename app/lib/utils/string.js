@@ -8,7 +8,7 @@ module.exports = {
 			.toLowerCase();
 	},
 	safeChannel: (channel) => {
-		return channel.replace(/^\#/, '');
+		return (channel || "").replace(/^\#/, '');
 	},
 	plural: (count) => {
 		return count === 1 ? '' : 's';

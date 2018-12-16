@@ -153,9 +153,11 @@ class ChatPollHandler {
 					}
 				})
 				.then(data => {
-					delete data._id;
-					console.log("emit poll.data");
-					_this._socket.of(`/${stringUtils.safeChannel(channel)}`).emit("poll.data", data);
+					if(data) {
+						delete data._id;
+						console.log("emit poll.data");
+						_this._socket.of(`/${stringUtils.safeChannel(channel)}`).emit("poll.data", data);
+					}
 					return resolve(data);
 				})
 				.catch(err => {

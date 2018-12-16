@@ -10,7 +10,7 @@ router.get('/twitch', passport.authenticate('twitch'), (req, res, next) => {
 router.get('/twitch/callback',
 	passport.authenticate('twitch', { failureRedirect: '/' }),
 	(req, res, next) => {
-		return res.redirect('/manage');
+		return res.redirect(`/manage`);
 	}
 );
 

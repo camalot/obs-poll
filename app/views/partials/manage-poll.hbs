@@ -1,0 +1,16 @@
+<div class="mdl-card" style="width:100%;">
+	<div class="mdl-card__title ">
+		<h4 class="mdl-card__title-text mdl-fillwidth" style="padding: 0; margin: 0;">{{this.title}}</h4>
+		<a href="/manage/edit/{{id}}" style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">edit</i></a>
+	</div>
+	<div class="mdl-card__actions">
+		<button type="button" data-action="poll-state" data-id="{{id}}" data-channel="{{channel}}" data-enabled="false"
+		 {{#unless enabled}} disabled="disabled" {{/unless}} style="float:right; margin-left: 10px;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--orange-500 mdl-color-text--white mdl-button--raised">End
+			Poll</button>
+		<button type="button" data-action="poll-state" data-id="{{id}}" data-channel="{{channel}}" data-enabled="true"
+		 {{#if enabled}} disabled="disabled" {{/if}} style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Start
+			Poll</button>
+		<button type="button" style="float:left;" data-dialog="poll-delete-{{id}}-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
+			Poll</button>
+	</div>
+</div>

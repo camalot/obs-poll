@@ -1,0 +1,54 @@
+<div class="page-content">
+	<div class="mdl-grid">
+		<div class="mdl-cell mdl-cell--12-col">
+
+			<div class="mdl-cell mdl-cell--12-col">
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+					<input class="mdl-textfield__input" type="text" name="overlay" id="title" readonly="readonly" value="{baseurl}/overlay/{{this.channel}}">
+					<label class="mdl-textfield__label" for="title">Overlay Url</label>
+					<span class="mdl-textfield__error"></span>
+				</div>
+			</div>
+
+
+			{{#each polls}}
+				{{#if enabled}}
+						{{> manage-activepoll user=user site=site poll=this }}
+				{{else}}
+						{{> manage-poll user=user site=site poll=this }}
+				{{/if}}
+
+				<dialog id="poll-delete-{{id}}-dialog" class="mdl-dialog" style="width: 50%">
+					<form action="/manage/delete/{{id}}" method="post" enctype="application/x-www-form-urlencoded">
+						<h4 class="mdl-dialog__title">Delete the Poll: '{{title}}'?</h4>
+						<div class="mdl-dialog__content" class="mdl-dialog">
+							<p>
+								Are you sure you want to delete this poll?
+							</p>
+							<p class="mdl-color-text--red-500"><b>THIS CANNOT BE UNDONE.</b></p>
+							<p>
+								Type the name <b>{{title}}</b> in the textbox below to delete.
+							</p>
+							<div class="mdl-textfield">
+								<input class="mdl-textfield__input" type="text" autocomplete="off" name="title" id="poll-validate" required pattern="{{title}}">
+								<label class="mdl-textfield__label" for="poll-validate">Poll Title</label>
+								<span class="mdl-textfield__error">Type the name <b>{{title}}</b> in the textbox to delete.</span>
+							</div>
+						</div>
+						<div class="mdl-dialog__actions">
+							<button type="button" class="mdl-button close">Cancel</button>
+							<button type="submit" class="mdl-button mdl-js-button mdl-color--red-500 mdl-color-text--white mdl-js-ripple-effect">Yes, Delete!</button>
+						</div>
+					</form>
+				</dialog>
+			{{/each}}
+
+
+	</div>
+</div>
+
+<div class="mdl-page-fab" style="z-index: 900">
+	<a id="menu-add" href="/manage/create" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+		<i class="material-icons">add</i>
+	</a>
+</div>

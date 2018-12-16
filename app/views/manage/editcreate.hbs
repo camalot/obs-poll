@@ -1,0 +1,124 @@
+{{#section 'head'}}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css" rel="stylesheet" type="text/css"/>
+{{/section}}
+
+<div class="page-content">
+	<div class="mdl-grid">
+		<div class="mdl-cell mdl-cell--12-col">
+
+
+
+			<form action="/manage/{{#if poll}}edit{{else}}create{{/if}}" method="post" enctype="application/x-www-form-urlencoded">
+				<input type="hidden" name="channel" value="{{channel}}" />
+				{{#if poll}}
+				<input type="hidden" name="id" value="{{poll.id}}" />
+				{{/if}}
+				<div class="mdl-card" style="width:100%;">
+					<div class="mdl-card__title">
+						<h4 class="mdl-card__title-text">
+							{{#if poll}}Edit{{else}}Create{{/if}} Poll
+						</h4>
+					</div>
+					<div class="mdl-card__supporting-text">
+						<div class="mdl-grid">
+
+							<div class="mdl-cell mdl-cell--6-col">
+								<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+									<input class="mdl-textfield__input" type="text" name="title" id="title" required value="{{poll.title}}">
+									<label class="mdl-textfield__label" for="title">Title of the Poll</label>
+									<span class="mdl-textfield__error">You must set a poll title.</span>
+								</div>
+								<div style="clear:both"></div>
+							</div>
+
+							<div class="mdl-cell mdl-cell--6-col">
+								<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+									<input class="mdl-textfield__input" data-type="datetimepicker" type="text" name="end" id="end" readonly value="{{poll.end}}">
+									<label class="mdl-textfield__label" for="title">When Does the Poll End</label>
+									<span class="mdl-textfield__error"></span>
+								</div>
+								<div style="clear:both"></div>
+							</div>
+
+							<div class="mdl-cell mdl-cell--12-col">
+								<div class="mdl-card" style="width:100%;">
+									<h5 class="">Poll Items <button type="button" style="float:right;" data-action="add-item" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Add Item</button></h5>
+									<div class="mdl-card__supporting-text">
+										<div class="mdl-grid" data-container="poll-items">
+
+											{{#each poll.items}}
+											<div data-type="item" class="mdl-cell mdl-cell--12-col">
+												<div class="mdl-cell mdl-cell--12-col">
+													<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+														<input class="mdl-textfield__input" type="text" name="items" required value="{{name}}">
+														<label class="mdl-textfield__label" for="title">Item</label>
+														<span class="mdl-textfield__error"></span>
+													</div>
+													<div style="clear:both"></div>
+												</div>
+												<div class="mdl-cell mdl-cell--12-col">
+														<label class="" for="color">Color</label>
+														<input type="color" data-type="color" name="color" required value="{{color}}">
+												</div>
+												<div class="mdl-cell mdl-cell--12-col">
+													<div style="float:right">
+														<button type="button" data-action="delete-item" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
+															Item</button>
+													</div>
+												</div>
+											</div>
+											{{/each}}
+
+
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="mdl-card__actions">
+						<button type="button" style="float:left; margin-right: 5px;" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--secondary ">Cancel</button>
+						<button type="submit" style="float:left;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Save
+							&amp; Start Poll</button>
+						{{!-- <button type="button" style="float:left;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
+							Poll</button> --}}
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="mdl-page-fab" style="z-index: 900">
+	<button id="menu-add" data-action="add-item" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+		<i class="material-icons">add</i>
+	</button>
+</div>
+
+
+<template data-id="poll-item">
+
+<div data-type="item" class="mdl-cell mdl-cell--12-col">
+	<div class="mdl-cell mdl-cell--12-col">
+		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
+			<input class="mdl-textfield__input" type="text" name="items" required value="">
+			<label class="mdl-textfield__label" for="title">Item</label>
+			<span class="mdl-textfield__error"></span>
+		</div>
+		<div style="clear:both"></div>
+	</div>
+	<div class="mdl-cell mdl-cell--12-col">
+		<label class="" for="color">Color</label>
+		<input type="color" data-type="color" name="color" required value="#0f0">
+	</div>
+	<div class="mdl-cell mdl-cell--12-col">
+		<div style="float:right">
+			<button type="button" data-action="delete-item" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
+				Item</button>
+		</div>
+	</div>
+</div>
+
+</template>

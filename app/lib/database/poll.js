@@ -10,6 +10,80 @@ const utils = require('../utils');
 const stringUtils = utils.string;
 const dateUtils = utils.date;
 
+let _latest = (channel) => {
+	return new Promise((resolve, reject) => {
+		let mongodb = new MongoDatabase(DATABASE_NAME);
+		channel = stringUtils.safeChannel(channel);
+		mongodb.find(COLLECTION_NAME, { channel: channel, enabled: true }, { created: -1 }, 1)
+			.then((results) => {
+				if (results && results.length >= 1) {
+					return resolve(results[0]);
+				} else {
+					return resolve(null);
+				}
+			}).catch((err) => {
+				console.error(err);
+				return reject(err);
+			});
+	});
+};
+
+let _get = (channel, id) => {
+	if (!id) {
+		return _latest(channel);
+	} else {
+		return new Promise((resolve, reject) => {
+			let mongodb = new MongoDatabase(DATABASE_NAME);
+			channel = stringUtils.safeChannel(channel);
+			// return mongodb.get(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: id });
+			mongodb.find(COLLECTION_NAME, { channel: channel, id: id }, { created: -1 }, 1)
+				.then((results) => {
+					if (results && results.length >= 1) {
+						return resolve(results[0]);
+					} else {
+						console.log("no poll for id: " + id);
+						return resolve(null);
+					}
+				}).catch((err) => {
+					console.error(err);
+					return reject(err);
+				});
+		});
+	}
+};
+
+let _setPollEnabled = (channel, id, enabled) => {
+	return new Promise((resolve, reject) => {
+		return _get(channel, id)
+			.then((poll) => {
+				if (poll) {
+					let x = merge(poll, {});
+					delete x._id;
+					x.enabled = enabled;
+					return _update(channel, x);
+				} else {
+					return resolve(null);
+				}
+			})
+			.then((result) => {
+				return resolve(result);
+			})
+			.catch(err => {
+				console.error(err);
+				return reject(err);
+			});
+	});
+};
+
+let _update = (channel, object) => {
+	let mongodb = new MongoDatabase(DATABASE_NAME);
+	let update = merge(object, {});
+
+	delete update._id;
+	return mongodb
+		.updateOne(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: object.id }, update);
+};
+
 module.exports = {
 	init: () => {
 		return new Promise((resolve, reject) => {
@@ -26,63 +100,28 @@ module.exports = {
 	},
 	delete: (channel, id) => {
 
-		// emit delete?
-
 		let mongodb = new MongoDatabase(DATABASE_NAME);
 		return mongodb.delete(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: id });
 	},
 	insert: (channel, object) => {
-
-		// emit create?
-
 		let mongodb = new MongoDatabase(DATABASE_NAME);
 		object.channel = stringUtils.safeChannel(channel);
 		return mongodb.insert(COLLECTION_NAME, merge(object, { created: dateUtils.utc() }));
 	},
-	update: (channel, object) => {
+	update: _update,
 
-		//emit update?
-
-		let mongodb = new MongoDatabase(DATABASE_NAME);
-		let update = merge(object, {});
-
-		delete update._id;
-		return mongodb
-			.updateOne(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: object.id }, update);
+	endPoll: (channel, id) => {
+		return _setPollEnabled(channel, id, false);
 	},
+
+	startPoll: (channel, id) => {
+		return _setPollEnabled(channel, id, true);
+	},
+
 	find: (channel, filter, sort, limit) => {
 		let mongodb = new MongoDatabase(DATABASE_NAME);
 		return mongodb.find(COLLECTION_NAME, merge(filter, { channel: stringUtils.safeChannel(channel) }), sort, limit || -1);
 	},
-	get: (channel) => {
-		return new Promise((resolve, reject) => {
-			let mongodb = new MongoDatabase(DATABASE_NAME);
-			// return mongodb.get(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: id });
-			mongodb.find(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel) }, { created: -1 }, 1)
-				.then((results) => {
-					if (results && results.length >= 1) {
-						return resolve(results[0]);
-					} else {
-						return resolve(null);
-					}
-				}).catch((err) => {
-					console.error(err);
-					return reject(err);
-				});
-		});
-		// return new Promise((resolve, reject) => {
-		// 	return resolve({
-		// 		id: "abc123",
-		// 		channel: channel,
-		// 		title: "Test Poll",
-		// 		items: [
-		// 			{ name: "Item 1", votes: [] },
-		// 			{ name: "Item 2", votes: [] },
-		// 			{ name: "Item 3", votes: [] },
-		// 			{ name: "Item 4", votes: [] }
-		// 		]
-		// 	})
-		// })
-
-	}
+	latest: _latest,
+	get: _get
 };

@@ -22,13 +22,24 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 require("./lib/hbs/xif");
 require("./lib/hbs/sections");
+require("./lib/hbs/partials");
+
 app.use(favicon(path.join(__dirname, "assets/images", "bit13-16.png")));
 
 // 12/11/2018 @dewberry512 1050 bits
 // 12/11/2018 @zehava77 2
 
-app.use(require('./lib/middleware/socketio')(socket));
-app.use(require('./lib/middleware/user'));
+app.use(
+	session({
+		secret: "aikfef93ja032~39@ajdsrdrbftrt4ghtrkql23",
+		resave: true,
+		saveUninitialized: true
+	})
+);
+
+
+app.use(passport.initialize());
+app.use(passport.session()); // passport session middleware
 
 passport.use(
 	new TwitchStrategy(
@@ -43,6 +54,18 @@ passport.use(
 		}
 	)
 );
+
+passport.serializeUser((user, done) => {
+	return done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+	return done(null, user);
+});
+
+
+app.use(require('./lib/middleware/socketio')(socket));
+app.use(require('./lib/middleware/user'));
 
 require('./socket')(socket);
 

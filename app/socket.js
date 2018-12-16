@@ -19,9 +19,10 @@ module.exports = (io) => {
 								return res(null);
 							}
 
-							return poll.get(item.channel)
+							return poll.latest(item.channel)
 								.then((data) => {
 									if (!data) {
+										// seems to return no data when changing the state of the poll.
 										console.log("no data");
 										return res(null);
 									}
