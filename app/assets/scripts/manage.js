@@ -13,7 +13,6 @@ let actions = {
 			return;
 		}
 
-		console.log("add item");
 		let template = $($("template[data-id='poll-item']").html());
 		//let newTemplate = $("<div />").append(template);
 		container.append(template);
@@ -31,25 +30,73 @@ let actions = {
 		console.log("poll-state");
 		let url = '/api/poll/state/';
 		let source = $(sender);
-		console.log(source);
-		console.log(source.data("enabled"));
 		$.ajax(url, {
 			method: "post",
 			data: {
 				id: source.data("id"),
 				channel: source.data("channel"),
-				enabled: source.data("enabled") === "true"
+				enabled: source.data("enabled") === "true" || source.data("enabled") === true
+			},
+			success: (data, status, xhr) => {
+				if (data) {
+
+					// hide the details of inactive polls
+					$(".poll-details").addClass("hidden");
+
+					if (data.enabled) {
+						// show the details of newly active poll
+						$(`.mdl-card[data-id="${data.id}"] .poll-details`)
+							.removeClass("hidden");
+					}
+
+					// set the state of the buttons of all "other" polls
+					$(`[data-name="poll-winner"]`)
+						.not(`.mdl-card[data-id="${data.id}"] [data-name="poll-winner"]`)
+						.attr("disabled", true);
+					$(`[data-name="poll-end"]`)
+						.not(`.mdl-card[data-id="${data.id}"] [data-name="poll-end"]`)
+						.attr("disabled", true);
+					$(`[data-name="poll-start"]`)
+						.not(`.mdl-card[data-id="${data.id}"] [data-name="poll-start"]`)
+						.attr("disabled", false);
+
+					// change state of active poll buttons
+					$(`[data-name="poll-winner"][data-id="${data.id}"]`).attr("disabled", !data.enabled);
+					$(`[data-name="poll-end"][data-id="${data.id}"]`).attr("disabled", !data.enabled);
+					$(`[data-name="poll-start"][data-id="${data.id}"]`).attr("disabled", data.enabled);
+				}
+			}
+		});
+	},
+	"show-winner": (sender) => {
+		let source = $(sender);
+		let url = '/api/poll/winner/';
+		$.ajax(url, {
+			method: "post",
+			data: {
+				id: source.data("id"),
+				channel: source.data("channel")
+			},
+			success: (data, status, xhr) => {
+				if (data) {
+					$(`[data-name="poll-winner"][data-id="${data.id}"]`).attr("disabled", data.closed);
+					$(`[data-name="poll-end"][data-id="${data.id}"]`).attr("disabled", !data.closed);
+					$(`[data-name="poll-start"][data-id="${data.id}"]`).attr("disabled", data.closed);
+				}
+			}
+		});
+	},
+	"poll-reset": (sender) => {
+		let source = $(sender);
+		let url = '/api/poll/reset/';
+		$.ajax(url, {
+			method: "post",
+			data: {
+				id: source.data("id"),
+				channel: source.data("channel")
 			},
 			success: (data, status, xhr) => {
 				console.log(data);
-				console.log($(`[data-action="poll-state"][data-enabled="false"][data-id="${data.id}]`));
-				if(data) {
-					$(`[data-action="poll-state"][data-enabled="false"][data-id="${data.id}"]`).attr("disabled", !data.enabled);
-					$(`[data-action="poll-state"][data-enabled="true"][data-id="${data.id}"]`).attr("disabled", data.enabled);
-				}
-			},
-			complete: (xhr, status) => {
-				console.log(status);
 			}
 		});
 	}
@@ -66,6 +113,16 @@ let checkMax = () => {
 	}
 };
 
+
+let generateRandomColor = () => {
+	let chars = "0123456789abcdef";
+	let color = "#";
+	for (let x = 0; x < 6; ++x) {
+		color += chars[Math.floor(Math.random() * 16)];
+	}
+	return color;
+};
+
 let init = function (base) {
 	$("[data-action]", $(base || document))
 		.on("click", function (e) {
@@ -75,16 +132,20 @@ let init = function (base) {
 			}
 		});
 
-		$("[data-type=color]").spectrum({
-			showInput: true,
-			chooseText: "OK",
-			preferredFormat: "hex3",
-			cancelText: "CANCEL",
-			clickoutFiresChange: true,
-			showInitial: true,
-		}).on("change.spectrum", (e, color) => {
+	if (base) {
+		let hexColor = generateRandomColor();
+		$("[data-type=color]", base).val(hexColor);
+	}
+	$("[data-type=color]").spectrum({
+		showInput: true,
+		chooseText: "OK",
+		preferredFormat: "hex3",
+		cancelText: "CANCEL",
+		clickoutFiresChange: true,
+		showInitial: true,
+	}).on("change.spectrum", (e, color) => {
 
-		});
+	});
 
 	$('[data-type=datetimepicker]').datetimepicker({
 		mask: true,
@@ -92,9 +153,23 @@ let init = function (base) {
 	});
 };
 
+
 $(() => {
 	init();
 
 	checkMax();
+
+	let urlInput = $("[data-type=url]");
+	let url = urlInput.data('value').replace(/^{baseurl}/i, `${location.protocol}//${location.hostname}${location.port ? ':' + location.port : ''}`);
+	urlInput.val(url);
+	urlInput.on('focus', function(e) {
+		if(this.select) {
+		this.select();
+		} else if (this.setSelectionRange) {
+			this.setSelectionRange(0, this.value.length);
+		} else {
+			console.log("Hmmmmmmmmm");
+		}
+	}).trigger('change');
 
 });

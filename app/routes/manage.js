@@ -58,19 +58,20 @@ router.get('/edit/:id', (req, res, next) => {
 // 12/15/2018 @zehava77 100 bits #charity
 // 12/15/2018 @capnyeti 100 #charity
 
-router.post('/edit/:id', auth.isLoggedIn, (req, res, next) => {
+router.post('/edit/', auth.isLoggedIn, (req, res, next) => {
 	let socket = res.locals.io;
 	let data = req.body;
 	let channel = req.user.username || data.channel;
 	let id = req.params.id || data.id;
-	let items = data.items.map(x => { return { name: x, votes: [] } });
+	let items = data.items.map((x, i) => { return { name: x, votes: [], color: data.color[i] || "#ff0000" } });
 	return poll.update(channel, {
 			id: id,
 			title: data.title,
 			channel: channel,
 			items: items,
 			enabled: data.enabled === undefined ? true : data.enabled,
-			ends: data.ends === "" ? null : data.ends
+			ends: data.ends === "" ? null : data.ends,
+			closed: false
 		})
 		.then((result) => {
 			if (result) {
@@ -91,7 +92,7 @@ router.post('/create/', auth.isLoggedIn, (req, res, next) => {
 
 	let data = req.body;
 	let channel = req.user.username || data.channel;
-	let items = data.items.map((x, i) => { return { name: x, votes: [], color: data.color[i] || "#f00" } });
+	let items = data.items.map((x, i) => { return { name: x, votes: [], color: data.color[i] || "#ff0000" } });
 
 	console.log(items);
 	return poll.insert(channel, {
@@ -101,12 +102,13 @@ router.post('/create/', auth.isLoggedIn, (req, res, next) => {
 			items: items,
 			enabled: data.enabled === undefined ? true : data.enabled,
 			created: dateUtil.utc(),
-			ends: data.ends === "" ? null : data.ends
+			ends: data.ends === "" ? null : data.ends,
+			closed: false
 		})
 		.then((result) => {
 			if (result) {
 				// emit the update event;
-				socket.of(`/${stringUtils.safeChannel(channel)}`).emit("poll.data", data);
+				socket.of(`/${stringUtils.safeChannel(channel)}`).emit("poll.data", result);
 				return res.redirect(`/manage`);
 			} else {
 				next(new Error("Poll Not Added"));

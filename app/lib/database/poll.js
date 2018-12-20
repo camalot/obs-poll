@@ -84,6 +84,14 @@ let _update = (channel, object) => {
 		.updateOne(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel), id: object.id }, update);
 };
 
+let _updateMany = (channel, filter, fields) => {
+	let mongodb = new MongoDatabase(DATABASE_NAME);
+
+	let selector = merge({ channel: stringUtils.safeChannel(channel) }, filter );
+	return mongodb
+		.updateMany(COLLECTION_NAME, selector, fields);
+};
+
 module.exports = {
 	init: () => {
 		return new Promise((resolve, reject) => {
@@ -92,7 +100,7 @@ module.exports = {
 	},
 	all: (channel) => {
 		let mongodb = new MongoDatabase(DATABASE_NAME);
-		return mongodb.select(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel) });
+		return mongodb.select(COLLECTION_NAME, { channel: stringUtils.safeChannel(channel) }, { created: -1 });
 	},
 	truncate: (channel) => {
 		let mongodb = new MongoDatabase(DATABASE_NAME);
@@ -109,7 +117,7 @@ module.exports = {
 		return mongodb.insert(COLLECTION_NAME, merge(object, { created: dateUtils.utc() }));
 	},
 	update: _update,
-
+	updateMany: _updateMany,
 	endPoll: (channel, id) => {
 		return _setPollEnabled(channel, id, false);
 	},

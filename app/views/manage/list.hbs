@@ -2,21 +2,17 @@
 	<div class="mdl-grid">
 		<div class="mdl-cell mdl-cell--12-col">
 
-			<div class="mdl-cell mdl-cell--12-col">
-				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-fillwidth">
-					<input class="mdl-textfield__input" type="text" name="overlay" id="title" readonly="readonly" value="{baseurl}/overlay/{{this.channel}}">
+			<div class="mdl-cell mdl-cell--11-col">
+				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 90%;">
+					<input class="mdl-textfield__input" type="text" name="overlay" id="title" readonly="readonly" data-value="{baseurl}/overlay/{{this.channel}}" data-type="url">
 					<label class="mdl-textfield__label" for="title">Overlay Url</label>
 					<span class="mdl-textfield__error"></span>
 				</div>
+				<button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised" style="float:right;">Copy</button>
 			</div>
 
-
 			{{#each polls}}
-				{{#if enabled}}
-						{{> manage-activepoll user=user site=site poll=this }}
-				{{else}}
-						{{> manage-poll user=user site=site poll=this }}
-				{{/if}}
+				{{> manage-poll user=user site=site poll=this }}
 
 				<dialog id="poll-delete-{{id}}-dialog" class="mdl-dialog" style="width: 50%">
 					<form action="/manage/delete/{{id}}" method="post" enctype="application/x-www-form-urlencoded">
@@ -42,8 +38,6 @@
 					</form>
 				</dialog>
 			{{/each}}
-
-
 	</div>
 </div>
 

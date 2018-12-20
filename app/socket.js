@@ -19,19 +19,33 @@ module.exports = (io) => {
 								return res(null);
 							}
 
-							return poll.latest(item.channel)
+							return poll.get(item.channel)
 								.then((data) => {
 									if (!data) {
 										// seems to return no data when changing the state of the poll.
 										console.log("no data");
 										return res(null);
 									}
-									return stats.calculate(data ? data : null);
+									if(!data.closed) {
+										console.log("not closed");
+										return stats.calculate(data ? data : null);
+									} else {
+										console.log("closed");
+										return stats.winner(data);
+									}
 								})
-								.then(data => {
-									delete data._id;
-									console.log(`emit to ${item.channel}: poll.data`);
-									socket.emit('poll.data', data);
+								.then((data) => {
+									if (data && data.closed) {
+										console.log("poll.winner");
+										socket.emit('poll.winner', data);
+									} else {
+										console.log("poll.data");
+										socket.emit('poll.data', data);
+									}
+									console.log(data);
+									if(data) {
+										delete data._id;
+									}
 									return res(data);
 								})
 								.catch(err => {

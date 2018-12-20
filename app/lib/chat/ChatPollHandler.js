@@ -8,8 +8,6 @@ const stringUtils = utils.string;
 const merge = require('merge');
 const stats = utils.stats;
 
-const POLL_COMMAND_REGEX = /^!poll(?:\s*(start|stop|help))?/i;
-
 // allow: !vote2 !v2 !vote 2 !v 2 !vote #2 !v #2
 const VOTE_COMMAND_REGEX = /^!v(?:ote)?\s?\#?(\d)/i;
 
@@ -56,40 +54,12 @@ class ChatPollHandler {
 	}
 
 	_processChat(channel, userstate, message, self) {
-		console.log("message: " + message);
-		if (POLL_COMMAND_REGEX.test(message)) {
-			if(!userstate.mod) {
-				return new Promise((resolve, reject) => {
-					return resolve();
-				});
-			}
-			let match = POLL_COMMAND_REGEX.exec(message);
-			console.log(message);
-			if (match[1]) {
-				console.log(`match: ${match[1]}`);
-				switch (match[1].toLowerCase()) {
-					default:
-						return this.help(channel, userstate.username);
-				}
-			} else {
-				console.log("trivia start command");
-				return this.startTrivia(channel, userstate);
-			}
-		}
 		if (VOTE_COMMAND_REGEX.test(message)) {
 			let vote = message.replace(/^!v(ote)?/, '').trim();
 			console.log(`${channel}:${userstate.username} voted: ${vote}`);
 			return this.vote(channel, userstate, vote);
 		}
 		console.log(`exit no matches: ${channel}:${userstate.username} => ${message}`);
-	}
-
-	help(channel, username) {
-		const _this = this;
-		return new Promise((resolve, reject) => {
-			return _this._chat
-				.say(channel, `${username}, `);
-		});
 	}
 
 	vote(channel, userstate, vote) {
@@ -166,35 +136,6 @@ class ChatPollHandler {
 				});
 		});
 	}
-
-	endPoll(channel) {
-
-	}
-
-	startPoll(channel) {
-		let _this = this;
-		return new Promise((resolve, reject) => {
-			const poll = require('../poll');
-			console.log("create poll");
-			poll.get(channel)
-				.then(question => {
-					if (question) {
-						return resolve(question);
-					} else {
-						return poll.create(channel.replace(/^\#/, ''));
-					}
-				})
-				.then((data) => {
-					io.sockets.emit("poll.data", data);
-					return resolve(data);
-				})
-				.catch(err => {
-					console.error(err);
-					return reject(err);
-				});
-		});
-	}
-
 }
 
 

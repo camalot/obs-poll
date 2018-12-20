@@ -1,16 +1,21 @@
-<div class="mdl-card" style="width:100%;">
+<div class="mdl-card" style="width:100%;" data-channel="{{channel}}" data-id="{{id}}">
 	<div class="mdl-card__title ">
-		<h4 class="mdl-card__title-text mdl-fillwidth" style="padding: 0; margin: 0;">{{this.title}}</h4>
-		<a href="/manage/edit/{{id}}" style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">edit</i></a>
+		<h4 class="mdl-card__title-text mdl-fillwidth" style="padding: 0; margin: 0;">{{title}}</h4>
+		<a href="/manage/edit/{{id}}" style="float:right; margin-right: 10px;" alt="Edit Poll" class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect"><i class="material-icons">edit</i></a>
+		<a type="button" data-name="poll-delete" style="float:right;" alt="Delete Poll" data-dialog="poll-delete-{{id}}-dialog"
+			class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white"><i class="material-icons">delete</i></a>
 	</div>
-	<div class="mdl-card__actions">
-		<button type="button" data-action="poll-state" data-id="{{id}}" data-channel="{{channel}}" data-enabled="false"
-		 {{#unless enabled}} disabled="disabled" {{/unless}} style="float:right; margin-left: 10px;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--orange-500 mdl-color-text--white mdl-button--raised">End
-			Poll</button>
-		<button type="button" data-action="poll-state" data-id="{{id}}" data-channel="{{channel}}" data-enabled="true"
-		 {{#if enabled}} disabled="disabled" {{/if}} style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Start
-			Poll</button>
-		<button type="button" style="float:left;" data-dialog="poll-delete-{{id}}-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
-			Poll</button>
+	<div class="mdl-card__supporting-text poll-details {{#unless enabled }}hidden{{/unless}}">
+		<div class="mdl-grid">
+			<div class="mdl-cell mdl-cell--12-col">
+				<ol style="margin: 0 0 10px 25px; padding: 0;">
+					{{#each items}}
+					<li>{{name}} ({{votes.length}} votes)</li>
+					{{/each}}
+				</ol>
+				<h4 style="margin: 0; padding: 0;">Total Votes: {{totalVotes}}</h4>
+			</div>
+		</div>
 	</div>
+	{{> manage-action-buttons user=user site=site }}
 </div>

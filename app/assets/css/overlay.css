@@ -26,6 +26,13 @@ body {
 	display: none;
 }
 
+.closed .title,
+.poll .title {
+	line-height: 2em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 ol {
   counter-reset: my-awesome-counter;
   list-style: none;
@@ -94,4 +101,35 @@ li .progress .bar {
 	-moz-transition: width 2s ease-in-out;
 	-o-transition: width 2s ease-in-out;
 	transition: width 2s ease-in-out;
+}
+
+.poll .help {
+	position: absolute;
+	bottom: 10px;
+	color: #ddd;
+	text-align: center;
+	width: 100%;
+}
+
+.poll .help .command {
+	color: #999;
+	display: inline-block;
+}
+
+
+.closed {
+
+}
+
+.closed .title {
+}
+
+.closed .winning {
+	margin: 10px 0 10px 0;
+	text-align: center;
+}
+
+.closed .votes-message {
+	text-align: center;
+	margin: 10px;
 }

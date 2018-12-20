@@ -119,6 +119,40 @@ class MongoDatabase {
 		return this.delete(collection);
 	}
 
+	updateMany(collection, filter, update, options) {
+		var _this = this;
+		return new Promise((resolve, reject) => {
+			return _this.connect()
+				.then((client) => {
+					return client.db().collection(collection);
+				})
+				.then((col) => {
+					return col.updateMany(filter, { $set: update }, options || { upsert: true, returnOriginal: true });
+				})
+				.then(data => {
+					if (data.result.ok) {
+						return _this.find(collection, filter, null, 1);
+					} else {
+						return resolve(null);
+					}
+				})
+				.then((result) => {
+					if (result && result.length > 0) {
+						return resolve(result || null);
+					} else {
+						return resolve(null);
+					}
+				})
+				.then(() => {
+					return _this.close();
+				})
+				.catch((err) => {
+					console.error(err);
+					return reject(err);
+				});
+		});
+	}
+
 	updateOne(collection, filter, update, options) {
 		var _this = this;
 		return new Promise((resolve, reject) => {

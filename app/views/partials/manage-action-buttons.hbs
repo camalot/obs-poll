@@ -1,0 +1,26 @@
+<div class="mdl-card__actions">
+
+	<button type="button" data-name="poll-winner" data-action="show-winner" style="float:right; margin-left: 10px;" data-id="{{id}}"
+			data-channel="{{channel}}"
+			{{#if closed }}disabled="disabled"{{/if}}
+			{{#unless enabled }}disabled="disabled"{{/unless}}
+			style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised mdl-color--blue-500">Display Winner
+		</button>
+	<button type="button" data-name="poll-end" data-action="poll-state" data-id="{{id}}" data-channel="{{channel}}" data-enabled="false"
+	 {{#unless enabled}} disabled="disabled" {{/unless}} style="float:right; margin-left: 10px;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--orange-500 mdl-color-text--white mdl-button--raised">End
+		Poll</button>
+	<button type="button" data-name="poll-start" data-action="poll-state" data-id="{{id}}" data-channel="{{channel}}" data-enabled="true"
+	 {{#if enabled}} disabled="disabled" {{/if}} style="float:right;" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary mdl-button--raised">Start
+		Poll</button>
+
+	{{!-- <button type="button" data-name="poll-delete" style="float:left;" data-dialog="poll-delete-{{id}}-dialog" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Delete
+		Poll</button> --}}
+
+	<button type="button" data-name="poll-reset"
+		data-action="poll-reset"
+		data-id="{{id}}" data-channel="{{channel}}"
+		style="float:left; margin-left: 10px;"
+		class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--red-500 mdl-color-text--white mdl-button--raised">Reset
+		Poll</button>
+
+</div>
